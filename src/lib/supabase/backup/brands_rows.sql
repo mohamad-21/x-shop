@@ -1,0 +1,1 @@
+INSERT INTO "public"."brands" ("id", "name", "display_name", "created_at") VALUES ('1', 'adidas', 'Adidas', '2025-12-19 17:52:34.09703+00'), ('2', 'nike', 'Nike', '2025-12-19 17:52:45.420576+00'), ('3', 'carhartt', 'Carhartt WIP', '2025-12-19 17:54:29.345986+00'), ('4', 'asos', 'Asos', '2025-12-19 17:54:41.492766+00'), ('5', 'boss', 'Boss', '2025-12-19 17:57:41.772781+00');

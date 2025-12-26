@@ -1,0 +1,1 @@
+INSERT INTO "public"."users" ("id", "name", "email", "hashed_password", "created_at") VALUES ('1', 'admin', 'admin@xshop.com', null, '2025-12-22 15:47:37.632664+00');
