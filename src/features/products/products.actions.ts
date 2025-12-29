@@ -1,9 +1,11 @@
 "use server";
 
-import { supabase } from "@/lib/supabase/supabase";
 import { ProductSelect, ProductsFilters } from "./product.type";
+import { createClient } from "@/lib/supabase/server";
 
-export async function getProducts({ searchTerm, category, sizes, colors, priceRange, sortBy, page = 1 }: ProductsFilters = {}) {
+export async function getProducts({ searchTerm, category, sizes, colors, priceRange, sortBy, brand, page = 1 }: ProductsFilters = {}) {
+	const supabase = await createClient();
+
 	let productIds: string[] = [];
 	let fetchOnIds = false;
 
@@ -61,7 +63,7 @@ export async function getProducts({ searchTerm, category, sizes, colors, priceRa
 		.from("products")
 		.select(`
 			*,
-			category:categories!inner(id, name, display_name),
+			category:categories!inner(id,name,display_name),
 			brand:brands!inner(id,name,display_name)
 		`, { count: "exact" })
 
@@ -105,6 +107,10 @@ export async function getProducts({ searchTerm, category, sizes, colors, priceRa
 		query.eq("categories.name", category);
 	}
 
+	if (brand && brand !== "all") {
+		query.eq("brands.name", brand);
+	}
+
 	const { count: totalProducts } = await query;
 
 	const perPage = 2;
@@ -118,20 +124,23 @@ export async function getProducts({ searchTerm, category, sizes, colors, priceRa
 	const { data: products, error } = await query
 		.overrideTypes<Array<ProductSelect>>();
 
-
 	return { products, error, page, totalPages, totalData: totalProducts!, from, to };
 }
 
 export async function getProduct(id: number | string) {
+	const supabase = await createClient();
+
 	const { data: pro, error } = await supabase.from("products")
 		.select(`
 			*,
 			category:categories!inner(id, name, display_name),
 			brand:brands!inner(id,name,display_name),
-			subImages:product_subimages!inner(id, image_url)
+			subImages:product_subimages!inner(id, image_url),
+			cart:carts(*)
 		`)
 		.eq("id", id)
-		.single<ProductSelect & { subImages: { id: number; image_url: string; }[] }>()
+		.single<ProductSelect & { cart: { id: number; product_id: number; user_id: number; quantity: number; created_at: string }[], subImages: { id: number; image_url: string; }[] }>()
+
 
 	const { data: proColors } = await supabase
 		.from("colors")
@@ -141,13 +150,37 @@ export async function getProduct(id: number | string) {
 		`)
 		.eq("product_colors.product_id", pro!.id);
 
+
 	const { data: proSizes } = await supabase
 		.from("sizes")
 		.select(`
 			*,
 			product_sizes!inner(*)
-		`)
+			`)
 		.eq("product_sizes.product_id", pro!.id);
 
 	return { pro, colors: proColors, sizes: proSizes, error };
+}
+
+export async function getRelatedProducts({ productId, categoryId, colorId }: { productId: number | string, categoryId: number | string, colorId: number | string }) {
+	const supabase = await createClient();
+
+	const { data: relatedProducts, error } = await supabase
+		.from("product_colors")
+		.select(`
+			*,
+			product:products!inner(*)
+		`)
+		.eq("products.category_id", categoryId)
+		// .eq("color_id", colorId)
+		.neq("products.id", productId)
+		.overrideTypes<Array<{
+			id: number,
+			created_at: string,
+			product_id: number,
+			color_id: number,
+			product: Omit<ProductSelect, "category" | "brand">
+		}>>()
+
+	return { relatedProducts, error }
 }

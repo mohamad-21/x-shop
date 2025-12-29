@@ -1,7 +1,7 @@
 "use client";
 
 import ProductItem from "@/features/products/components/ProductItem";
-import { categoriesOptions, colors, sizes, sortOptions } from "@/lib/constants";
+import { brandOptions, categoriesOptions, colors, sizes, sortOptions } from "@/lib/constants";
 import SectionHeader from "@/shared/components/SectionHeader";
 import { Button } from "@/shared/components/ui/button";
 import { Checkbox } from "@/shared/components/ui/checkbox";
@@ -35,6 +35,7 @@ export default function MainShopping({ products, page, from, to, totalPages, tot
 	const selectedSizes = searchParams.getAll("size");
 
 	const defaultCatValue = categoriesOptions.some(cat => cat.value === searchParams.get("cat")) ? searchParams.get("cat")! : "";
+	const defaultBrandValue = brandOptions.some(brand => brand.value === searchParams.get("brand")) ? searchParams.get("brand")! : "";
 	const defaultSortValue = sortOptions.some(sort => sort.value === searchParams.get("sortby")) ? searchParams.get("sortby")! : "";
 
 	const onFilterColor = (color: string, checked: string | boolean) => {
@@ -72,6 +73,20 @@ export default function MainShopping({ products, page, from, to, totalPages, tot
 			params.delete("cat")
 		} else {
 			params.set("cat", value);
+		}
+
+		startTransition(() => {
+			router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+		})
+	}
+
+	const onFilterBrand = (value: string) => {
+		const params = new URLSearchParams(searchParams);
+
+		if (!value.trim() || value === "all") {
+			params.delete("brand")
+		} else {
+			params.set("brand", value);
 		}
 
 		startTransition(() => {
@@ -176,10 +191,25 @@ export default function MainShopping({ products, page, from, to, totalPages, tot
 
 						<Select onValueChange={onFilterCategory} defaultValue={defaultCatValue} disabled={isPending}>
 							<SelectTrigger>
-								<SelectValue placeholder="Select Category" />
+								<SelectValue placeholder="Category" />
 							</SelectTrigger>
 							<SelectContent className="w-32.5">
 								{categoriesOptions.map(item => (
+									<SelectItem value={item.value} key={item.value}>{item.label}</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+
+					<div>
+						<h3 className="text-xl mb-4">Brand</h3>
+
+						<Select onValueChange={onFilterBrand} defaultValue={defaultBrandValue} disabled={isPending}>
+							<SelectTrigger>
+								<SelectValue placeholder="Brand" />
+							</SelectTrigger>
+							<SelectContent className="w-32.5">
+								{brandOptions.map(item => (
 									<SelectItem value={item.value} key={item.value}>{item.label}</SelectItem>
 								))}
 							</SelectContent>

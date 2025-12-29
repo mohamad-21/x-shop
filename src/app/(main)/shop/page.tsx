@@ -20,11 +20,12 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 	const { products, error, page, from, to, totalPages, totalData } = await getProducts({
 		searchTerm: params?.s as string,
 		category: params?.cat as string,
+		brand: params?.brand as string,
 		colors,
 		sizes,
 		sortBy,
 		page: currentPage,
-		priceRange
+		priceRange,
 	});
 
 	return (

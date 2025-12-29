@@ -29,10 +29,14 @@ export default function ProductItem({ pro }: Props) {
 				<Link href={`/pro/${pro.id}`}>
 					<img src={pro.image_url} alt={pro.title} className="rounded-y-xl" />
 				</Link>
-				<p className="absolute bottom-2 left-2 bg-black/40 py-2 px-3 text-xs rounded-full">{pro.brand.display_name}</p>
+				{pro.brand && (
+					<p className="absolute bottom-2 left-2 bg-black/40 py-2 px-3 text-xs rounded-full">{pro.brand.display_name}</p>
+				)}
 			</CardHeader>
 			<CardContent className="flex flex-col gap-4 px-4">
-				<Link href={`/cat/${pro.category.name}`} className="text-primary">{pro.category.display_name}</Link>
+				{pro.category && (
+					<Link href={`/shop?cat=${pro.category?.name}`} className="text-primary">{pro.category?.display_name}</Link>
+				)}
 				<Link href={`/pro/${pro.id}`}><CardTitle>{pro.title}</CardTitle></Link>
 			</CardContent>
 			<CardFooter className="mt-auto justify-between flex-wrap-reverse gap-4 px-4">

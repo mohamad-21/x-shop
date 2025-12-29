@@ -1,9 +1,10 @@
-import { supabase } from "@/lib/supabase/supabase";
+import { createClient } from "@/lib/supabase/server";
 import SectionHeader from "@/shared/components/SectionHeader";
 import ProductItem from "./ProductItem";
 import { ProductSelect } from "../product.type";
 
 export default async function ProductsOverview() {
+	const supabase = await createClient();
 	const { data: products, error } = await supabase.from("products").select(`
 		*,
 		category:categories(id, name, display_name),

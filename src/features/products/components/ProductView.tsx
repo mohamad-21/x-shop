@@ -4,27 +4,53 @@ import { colorsClasses } from "@/lib/constants";
 import { Button } from "@/shared/components/ui/button";
 import { ProductSelect } from "../product.type";
 import { IconHeart, IconMinus, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import { ImageZoom } from "@/components/animate-ui/primitives/effects/image-zoom";
+import { useState, useTransition } from "react";
+import { ImageZoom } from "@/shared/components/ui/image-zoom";
+import ProductItem from "./ProductItem";
+import SectionHeader from "@/shared/components/SectionHeader";
+import { addToCart, removeFromCart } from "@/features/carts/carts.actions";
+import { Spinner } from "@/shared/components/ui/spinner";
 
 type Props = {
-	pro: ProductSelect & { subImages: { id: number; image_url: string; }[] };
+	pro: ProductSelect & { cart: { id: number; product_id: number; user_id: number; quantity: number; created_at: string }[], subImages: { id: number; image_url: string; }[] };
 	colors: any[];
 	sizes: any[];
+	relatedProducts: {
+		id: number,
+		created_at: string,
+		product_id: number,
+		color_id: number,
+		product: Omit<ProductSelect, "category" | "brand">
+	}[] | null;
 }
 
-export default function ProductView({ pro, colors, sizes }: Props) {
+export default function ProductView({ pro, colors, sizes, relatedProducts }: Props) {
 	const [activeImageIdx, setActiveImageIdx] = useState(0);
-	const [totalInCart, setTotalInCart] = useState(0);
+	const [totalInCart, setTotalInCart] = useState(pro.cart.find(item => item.product_id === pro.id)?.quantity || 0);
+	const [isPending, startTransition] = useTransition();
 
 	const images = [pro.image_url, ...pro.subImages.map(i => i.image_url)];
+
+	const onAddToCart = () => {
+		startTransition(async () => {
+			await addToCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", 1);
+		})
+		setTotalInCart(prev => prev + 1);
+	}
+
+	const onRemoveFromCart = () => {
+		startTransition(async () => {
+			await removeFromCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", true);
+		})
+		setTotalInCart(prev => prev - 1);
+	}
 
 	return (
 		<div className="inner-section space-y-28">
 			<div className="flex lg:flex-row flex-col gap-8 gap-y-18">
 				<div className="flex flex-col gap-3">
 					<div className="w-full">
-						<ImageZoom>
+						<ImageZoom className="max-w-max">
 							<img src={images[activeImageIdx]} className="object-cover max-w-full" alt={pro.title} />
 						</ImageZoom>
 					</div>
@@ -39,12 +65,17 @@ export default function ProductView({ pro, colors, sizes }: Props) {
 				</div>
 
 				<div className="space-y-6">
-					<p className="text-primary">{pro.category.display_name}</p>
+					<p className="text-primary">{pro.category?.display_name}</p>
 
 					<div className="space-y-3">
 						<h2 className="text-2xl">{pro.title}</h2>
-						<p className="text-muted-foreground text-sm">{pro.brand.display_name}</p>
+						<p className="text-muted-foreground text-sm">{pro.brand?.display_name}</p>
 					</div>
+
+					<p className="text-2xl">{Intl.NumberFormat("en-us", {
+						currency: "USD",
+						style: "currency"
+					}).format(pro.price)}</p>
 
 					<div className="space-y-3">
 						<h3 className="text-xl">Colors</h3>
@@ -56,7 +87,6 @@ export default function ProductView({ pro, colors, sizes }: Props) {
 						</div>
 					</div>
 
-
 					<div className="space-y-3">
 						<h3 className="text-xl">Sizes</h3>
 
@@ -67,23 +97,21 @@ export default function ProductView({ pro, colors, sizes }: Props) {
 						</div>
 					</div>
 
-					<p className="text-2xl">{Intl.NumberFormat("en-us", {
-						currency: "USD",
-						style: "currency"
-					}).format(pro.price)}</p>
-
 					<div className="flex items-center gap-3 justify-between">
 						{totalInCart > 0 ? (
 							<div className="flex items-center space-x-4">
+								{isPending && (
+									<Spinner />
+								)}
 								<div className="space-x-2">
-									<button className="text-muted-foreground" onClick={() => setTotalInCart(prev => prev - 1)}><IconMinus size={20} /></button>
-									<button className="text-muted-foreground" onClick={() => setTotalInCart(prev => prev + 1)}><IconPlus size={20} /></button>
+									<button className="text-muted-foreground" onClick={onRemoveFromCart} disabled={isPending}><IconMinus size={24} /></button>
+									<button className="text-muted-foreground" onClick={onAddToCart} disabled={isPending}><IconPlus size={24} /></button>
 								</div>
 
-								<div className="mb-1.5 text-lg">{totalInCart}</div>
+								<div className="mb-1.5 text-xl">{totalInCart}</div>
 							</div>
 						) : (
-							<Button size="lg" className="text-base p-6 font-bold" onClick={() => setTotalInCart(prev => prev + 1)}>Add To Cart</Button>
+							<Button size="lg" className="text-base p-6 font-bold" onClick={onAddToCart} disabled={isPending}>Add To Cart</Button>
 						)}
 						<button><IconHeart className="hover:fill-red-500 hover:text-red-500" size={30} /></button>
 					</div>
@@ -95,6 +123,15 @@ export default function ProductView({ pro, colors, sizes }: Props) {
 				<h2 className="text-2xl">Description</h2>
 
 				<p className="whitespace-pre-line text-muted-foreground">{pro.description}</p>
+			</div>
+
+			<div>
+				<SectionHeader title="Related Products" />
+				<div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
+					{relatedProducts?.map(pro => (
+						<ProductItem pro={pro.product} key={pro.id} />
+					))}
+				</div>
 			</div>
 		</div>
 	)

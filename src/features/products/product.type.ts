@@ -1,12 +1,12 @@
 import { Database } from "@/lib/supabase/database.types";
 
 export type ProductSelect = Database["public"]["Tables"]["products"]["Row"] & {
-	category: {
+	category?: {
 		id: number;
 		name: string;
 		display_name: string;
 	}
-	brand: {
+	brand?: {
 		id: number;
 		name: string;
 		display_name: string;
@@ -24,6 +24,7 @@ export interface ProductsFilters {
 		to: number
 	}
 	category?: string;
+	brand?: string;
 	colors?: string[];
 	sizes?: string[];
 	sortBy?: string;

@@ -1,18 +1,14 @@
 import Footer from "@/shared/components/Footer";
 import Header from "@/shared/components/header/Header";
-import HeaderWrapper from "@/shared/components/header/HeaderWrapper";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <HeaderWrapper />
-      <main className="grid min-h-[70dvh]">
-        {children}
-      </main>
-      <Footer />
-    </>
+    <main className="flex flex-col justify-center items-center min-h-[100dvh]">
+      {children}
+    </main>
   );
 }

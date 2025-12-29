@@ -31,6 +31,33 @@ export const navLinks = [
 		]
 	},
 	{
+		title: "Brands",
+		href: "#",
+		haveSubLinks: true,
+		subLinks: [
+			{
+				title: "Nike",
+				href: "/shop?brand=nike",
+			},
+			{
+				title: "Adidas",
+				href: "/shop?brand=adidas",
+			},
+			{
+				title: "Asos Design",
+				href: "/shop?brand=asos",
+			},
+			{
+				title: "Boss",
+				href: "/shop?brand=boss",
+			},
+			{
+				title: "Carhartt WIP",
+				href: "/shop?brand=carhartt",
+			},
+		]
+	},
+	{
 		title: "Contact",
 		href: "/contact",
 		haveSubLinks: false
@@ -113,6 +140,33 @@ export const categoriesOptions = [
 		value: "hoodie"
 	},
 ]
+
+export const brandOptions = [
+	{
+		label: "All",
+		value: "all"
+	},
+	{
+		label: "Nike",
+		value: "nike"
+	},
+	{
+		label: "Adidas",
+		value: "adidas"
+	},
+	{
+		label: "Asos Design",
+		value: "asos"
+	},
+	{
+		label: "Boss",
+		value: "boss"
+	},
+	{
+		label: "Carhartt WIP",
+		value: "carhartt"
+	}
+];
 
 export const colors = ["black", "white", "blue", "red"];
 
