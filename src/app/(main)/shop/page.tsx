@@ -1,5 +1,6 @@
 import MainShopping from "@/features/products/components/MainShopping";
 import { getProducts } from "@/features/products/products.actions";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 	const params = await searchParams;
@@ -17,6 +18,9 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 		to: priceTo
 	} : undefined;
 
+	const supabase = await createClient();
+	const { data: { user } } = await supabase.auth.getUser();
+
 	const { products, error, page, from, to, totalPages, totalData } = await getProducts({
 		searchTerm: params?.s as string,
 		category: params?.cat as string,
@@ -28,15 +32,20 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 		priceRange,
 	});
 
+	const pagination = {
+		page: currentPage,
+		totalPages: totalPages,
+		from: from,
+		to: to,
+		totalData: totalData
+	}
+
 	return (
 		<div className="page">
 			<MainShopping
 				products={products!}
-				page={currentPage}
-				totalPages={totalPages}
-				from={from}
-				to={to}
-				totalData={totalData}
+				pagination={pagination}
+				user={user}
 			/>
 		</div>
 	)

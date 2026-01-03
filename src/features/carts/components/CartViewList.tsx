@@ -75,7 +75,7 @@ export default function CartViewList({ cart }: Props) {
 						)}
 					</div>
 				)) : (
-					<h2 className="text-2xl">There is no any products in your cart.</h2>
+					<h2 className="text-xl text-muted-foreground">There is no any products in your cart.</h2>
 				)}
 			</CardContent>
 		</Card>

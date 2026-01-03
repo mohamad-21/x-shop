@@ -162,25 +162,22 @@ export async function getProduct(id: number | string) {
 	return { pro, colors: proColors, sizes: proSizes, error };
 }
 
-export async function getRelatedProducts({ productId, categoryId, colorId }: { productId: number | string, categoryId: number | string, colorId: number | string }) {
+export async function getRelatedProducts({ productId, categoryId }: { productId: number | string, categoryId: number | string }) {
 	const supabase = await createClient();
 
 	const { data: relatedProducts, error } = await supabase
-		.from("product_colors")
+		.from("products")
 		.select(`
 			*,
-			product:products!inner(*)
+			category:categories!inner(id, name, display_name),
+			brand:brands!inner(id,name,display_name)
 		`)
-		.eq("products.category_id", categoryId)
-		// .eq("color_id", colorId)
-		.neq("products.id", productId)
-		.overrideTypes<Array<{
-			id: number,
-			created_at: string,
-			product_id: number,
-			color_id: number,
-			product: Omit<ProductSelect, "category" | "brand">
-		}>>()
+		.eq("category_id", categoryId)
+		.neq("id", productId)
+		.overrideTypes<Array<ProductSelect>>()
+
+	console.log(relatedProducts)
+
 
 	return { relatedProducts, error }
 }

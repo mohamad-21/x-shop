@@ -14,6 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "../ui/input";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "../ui/navigation-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import Sidebar from "./Sidebar";
 
 type Props = {
 	user: UserSelect | null;
@@ -22,8 +23,10 @@ type Props = {
 export default function Header({ user }: Props) {
 	const [isActiveSearching, setIsActiveSearching] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [openSidebar, setOpenSidebar] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
+
 
 	const onSearchSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -101,9 +104,9 @@ export default function Header({ user }: Props) {
 									<DropdownMenuTrigger asChild>
 										<Button variant="outline">{user.name}</Button>
 									</DropdownMenuTrigger>
-									<DropdownMenuContent className="-translate-x-20">
+									<DropdownMenuContent className="">
 										<DropdownMenuItem asChild>
-											<Link href="/profile/account">Account</Link>
+											<Link href="/account/profile">Account</Link>
 										</DropdownMenuItem>
 										<DropdownMenuItem className="text-red-500" onClick={logout}>Logout</DropdownMenuItem>
 									</DropdownMenuContent>
@@ -119,7 +122,7 @@ export default function Header({ user }: Props) {
 								<CartOverview user={user} />
 							</PopoverContent>
 						</Popover>
-						<button className="md:hidden flex">
+						<button className="md:hidden flex" onClick={() => setOpenSidebar(!openSidebar)}>
 							<IconMenu />
 						</button>
 					</div>
@@ -133,6 +136,8 @@ export default function Header({ user }: Props) {
 					<IconSearch size={22} className="absolute top-1/2 right-8 -translate-y-1/2" />
 				</form>
 			</div>
+
+			<Sidebar openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
 		</>
 	)
 }

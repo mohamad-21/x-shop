@@ -318,6 +318,9 @@ export type Database = {
           name: string
           email: string
           hashed_password: string | null
+          country: string | null
+          city: string | null
+          address: string | null
           created_at: string
         }
         Insert: {
@@ -327,6 +330,9 @@ export type Database = {
           id?: number
           uid: string
           name: string
+          country?: string | null
+          city?: string | null
+          address?: string | null
         }
         Update: {
           created_at?: string
@@ -335,6 +341,9 @@ export type Database = {
           id?: number
           uid?: string
           name?: string
+          country?: string | null
+          city?: string | null
+          address?: string | null
         }
         Relationships: []
       }

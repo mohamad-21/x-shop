@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CartItemsSelect } from "../cart.types";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { UserSelect } from "@/features/user/user.types";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
 type Props = {
 	user: UserSelect | null;
@@ -48,7 +49,7 @@ export default function CartOverview({ user }: Props) {
 
 
 	return (
-		<div className="py-4 px-3 flex flex-col">
+		<ScrollArea className="py-4 px-3 flex flex-col max-h-[80dvh]">
 			<div className="flex items-center justify-between gap-4 mb-6">
 				<h2 className="text-xl">Cart</h2>
 				<div className="text-muted-foreground">{cartItems.length} items</div>
@@ -71,6 +72,6 @@ export default function CartOverview({ user }: Props) {
 			<Link href="/cart" className="block">
 				<Button className="mt-7 w-full" size="lg">View Cart</Button>
 			</Link>
-		</div>
+		</ScrollArea>
 	)
 }

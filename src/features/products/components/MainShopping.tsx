@@ -12,17 +12,21 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { ProductSelect } from "../product.type";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/shared/components/ui/pagination";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
 	products: ProductSelect[];
-	totalPages: number;
-	page: number;
-	from: number;
-	to: number;
-	totalData: number;
+	pagination: {
+		totalPages: number;
+		page: number;
+		from: number;
+		to: number;
+		totalData: number;
+	}
+	user: User | null;
 }
 
-export default function MainShopping({ products, page, from, to, totalPages, totalData }: Props) {
+export default function MainShopping({ products, pagination: { page, from, to, totalPages, totalData }, user }: Props) {
 	const searchParams = useSearchParams();
 	const [priceRange, setPriceRange] = useState([0, 100000]);
 	const [searchTerm, setSearchTerm] = useState(searchParams.get("s") || "");
@@ -154,6 +158,10 @@ export default function MainShopping({ products, page, from, to, totalPages, tot
 		}
 	}, [products]);
 
+	useEffect(() => {
+		setSearchTerm(searchParams.get("s") || "");
+	}, [searchParams.get("s")]);
+
 	return (
 		<div className="inner-section flex lg:flex-row flex-col-reverse gap-7 gap-y-20">
 			<div className="flex-1 max-w-lg">
@@ -263,7 +271,7 @@ export default function MainShopping({ products, page, from, to, totalPages, tot
 
 				<div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
 					{products?.map(pro => (
-						<ProductItem pro={pro} key={pro.id} />
+						<ProductItem pro={pro} user={user} key={pro.id} />
 					))}
 				</div>
 

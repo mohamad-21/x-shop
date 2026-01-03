@@ -10,21 +10,17 @@ import ProductItem from "./ProductItem";
 import SectionHeader from "@/shared/components/SectionHeader";
 import { addToCart, removeFromCart } from "@/features/carts/carts.actions";
 import { Spinner } from "@/shared/components/ui/spinner";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
 	pro: ProductSelect & { cart: { id: number; product_id: number; user_id: number; quantity: number; created_at: string }[], subImages: { id: number; image_url: string; }[] };
 	colors: any[];
 	sizes: any[];
-	relatedProducts: {
-		id: number,
-		created_at: string,
-		product_id: number,
-		color_id: number,
-		product: Omit<ProductSelect, "category" | "brand">
-	}[] | null;
+	relatedProducts: ProductSelect[] | null;
+	user: User | null;
 }
 
-export default function ProductView({ pro, colors, sizes, relatedProducts }: Props) {
+export default function ProductView({ pro, colors, sizes, relatedProducts, user }: Props) {
 	const [activeImageIdx, setActiveImageIdx] = useState(0);
 	const [totalInCart, setTotalInCart] = useState(pro.cart.find(item => item.product_id === pro.id)?.quantity || 0);
 	const [isPending, startTransition] = useTransition();
@@ -34,15 +30,15 @@ export default function ProductView({ pro, colors, sizes, relatedProducts }: Pro
 	const onAddToCart = () => {
 		startTransition(async () => {
 			await addToCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", 1);
+			setTotalInCart(prev => prev + 1);
 		})
-		setTotalInCart(prev => prev + 1);
 	}
 
 	const onRemoveFromCart = () => {
 		startTransition(async () => {
 			await removeFromCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", true);
+			setTotalInCart(prev => prev - 1);
 		})
-		setTotalInCart(prev => prev - 1);
 	}
 
 	return (
@@ -82,7 +78,7 @@ export default function ProductView({ pro, colors, sizes, relatedProducts }: Pro
 
 						<div className="flex gap-3">
 							{colors.map(color => (
-								<button className={`w-7 h-7 border border-border ${colorsClasses[color.name]}`} key={color.id}></button>
+								<button className={`w-9 h-9 rounded-sm border border-border ${colorsClasses[color.name]}`} key={color.id}></button>
 							))}
 						</div>
 					</div>
@@ -129,7 +125,7 @@ export default function ProductView({ pro, colors, sizes, relatedProducts }: Pro
 				<SectionHeader title="Related Products" />
 				<div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
 					{relatedProducts?.map(pro => (
-						<ProductItem pro={pro.product} key={pro.id} />
+						<ProductItem pro={pro} user={user} key={pro.id} />
 					))}
 				</div>
 			</div>

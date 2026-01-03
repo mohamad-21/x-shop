@@ -21,7 +21,7 @@ import * as z from "zod";
 const formSchema = z.object({
 	name: z.string().min(3, "Enter your name"),
 	email: z.email("Provide an valid email"),
-	password: z.string("Enter your password"),
+	password: z.string("Enter your password").min(6, "Password must be at least 6 characters"),
 	passwordConfirmation: z.string("Confirm your password"),
 })
 	.superRefine(({ password, passwordConfirmation }, ctx) => {

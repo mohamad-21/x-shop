@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { CartItemsSelect } from "./cart.types";
+import { revalidatePath } from "next/cache";
 
 export async function getCart() {
 	const supabase = await createClient();
@@ -46,10 +47,11 @@ export async function addToCart(productId: number, userId: string, quantity: num
 	const res = await supabase
 		.from("carts")
 		.insert({ product_id: productId, user_id: userId, quantity });
+
+	return res;
 }
 
 export async function removeFromCart(productId: number, userId: string, decrease: boolean = false) {
-	console.log(userId);
 	const supabase = await createClient();
 
 	const { data: cart, error } = await supabase
@@ -81,5 +83,17 @@ export async function removeFromCart(productId: number, userId: string, decrease
 		.select()
 
 	console.log(res);
+
+}
+
+export async function removeAllFromCart(userId: string) {
+	const supabase = await createClient();
+
+	await supabase
+		.from("carts")
+		.delete()
+		.eq("user_id", userId)
+
+	revalidatePath("/cart");
 
 }

@@ -28,6 +28,10 @@ export const navLinks = [
 				title: "Hoodies",
 				href: "/shop?cat=hoodie",
 			},
+			{
+				title: "Dresses",
+				href: "/shop?cat=dress",
+			},
 		]
 	},
 	{
