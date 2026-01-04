@@ -105,6 +105,9 @@ export default function MainShopping({ products, pagination: { page, from, to, t
 		if (!searchTerm) {
 			params.delete("s")
 		} else {
+			if (params.has("page")) {
+				params.delete("page");
+			}
 			params.set("s", searchTerm);
 		}
 

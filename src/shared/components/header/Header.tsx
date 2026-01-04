@@ -129,7 +129,7 @@ export default function Header({ user }: Props) {
 				</nav>
 			</header>
 
-			<div className={cn("fixed inset-0 bg-[#09090b]/70 backdrop-blur-md flex items-center justify-center inner-section z-10 duration-300", `${isActiveSearching ? "opacity-100 top-0" : "opacity-0 -translate-y-full"}`)}>
+			<div className={cn("fixed inset-0 bg-[#09090b]/80 backdrop-blur-md flex items-center justify-center inner-section z-10 duration-300 min-w-screen", `${isActiveSearching ? "opacity-100 top-0" : "opacity-0 -translate-y-full"}`)}>
 				<div className="absolute inset-0" onClick={() => setIsActiveSearching(false)} />
 				<form className="flex relative flex-1 max-w-md" onSubmit={onSearchSubmit}>
 					<Input className="py-9 px-7 pr-12 w-full text-base! bg-background!" placeholder="Search products" autoFocus value={searchTerm} onChange={e => setSearchTerm(e.target.value)} disabled={isPending} />

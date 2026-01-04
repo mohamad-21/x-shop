@@ -1,6 +1,6 @@
-import Banner from "@/features/home/Banner";
+import Banner from "@/features/home/components/Banner";
 import ProductsOverview from "@/features/products/components/ProductsOverview";
-import ShoppingFeatures from "@/features/home/ShoppingFeatures";
+import ShoppingFeatures from "@/features/home/components/ShoppingFeatures";
 
 export default function HomePage() {
 	return (

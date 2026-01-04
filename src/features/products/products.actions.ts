@@ -113,7 +113,7 @@ export async function getProducts({ searchTerm, category, sizes, colors, priceRa
 
 	const { count: totalProducts } = await query;
 
-	const perPage = 2;
+	const perPage = 3;
 	const totalPages = Math.ceil(totalProducts! / perPage);
 	const from = (page - 1) * perPage;
 	const to = from + perPage - 1;
