@@ -6,15 +6,13 @@ import SectionHeader from "@/shared/components/SectionHeader";
 import { Button } from "@/shared/components/ui/button";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Input } from "@/shared/components/ui/input";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/shared/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { Slider } from "@/shared/components/ui/slider";
-import { User } from "@supabase/supabase-js";
-import { IconChevronDown } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
+import { FormEvent, useEffect, useState, useTransition } from "react";
 import { ProductSelect } from "../product.type";
-import Link from "next/link";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/shared/components/ui/pagination";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
 	products: ProductSelect[];
@@ -43,8 +41,6 @@ export default function MainShopping({ products, pagination: { page, from, to, t
 	const defaultCatValue = categoriesOptions.some(cat => cat.value === searchParams.get("cat")) ? searchParams.get("cat")! : "";
 	const defaultBrandValue = brandOptions.some(brand => brand.value === searchParams.get("brand")) ? searchParams.get("brand")! : "";
 	const defaultSortValue = sortOptions.some(sort => sort.value === searchParams.get("sortby")) ? searchParams.get("sortby")! : "";
-
-	const filtersRef = useRef<HTMLDivElement>(null);
 
 	const onFilterColor = (color: string, checked: string | boolean) => {
 		const params = new URLSearchParams(searchParams);
@@ -135,9 +131,7 @@ export default function MainShopping({ products, pagination: { page, from, to, t
 	}
 
 	const onClearFilters = () => {
-		startTransition(() => {
-			router.replace(pathname);
-		});
+		router.replace(pathname, { scroll: false });
 	}
 
 	const onSelectPage = (num: number) => {
@@ -173,7 +167,7 @@ export default function MainShopping({ products, pagination: { page, from, to, t
 
 	return (
 		<div className="inner-section flex lg:flex-row flex-col-reverse gap-7 gap-y-20">
-			<div className="flex-1 max-w-lg" ref={filtersRef}>
+			<div className="flex-1 max-w-lg">
 				<SectionHeader title="Filter Results" className="items-start" />
 
 				<div className="space-y-10">
@@ -269,8 +263,7 @@ export default function MainShopping({ products, pagination: { page, from, to, t
 			</div>
 
 			<div className="w-full flex-3">
-				<SectionHeader title={title} className="sm:flex-row md:items-center flex-col items-start">
-					<Button variant="outline" className="lg:hidden flex" onClick={() => filtersRef.current?.scrollIntoView({ block: "nearest" })}>Filter Results <IconChevronDown /></Button>
+				<SectionHeader title={title}>
 					<Select name="sortby" onValueChange={onSortChange} defaultValue={defaultSortValue} disabled={isPending}>
 						<SelectTrigger className="w-32.5">
 							<SelectValue placeholder="Sort By" />

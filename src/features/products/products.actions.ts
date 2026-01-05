@@ -176,8 +176,5 @@ export async function getRelatedProducts({ productId, categoryId }: { productId:
 		.neq("id", productId)
 		.overrideTypes<Array<ProductSelect>>()
 
-	console.log(relatedProducts)
-
-
 	return { relatedProducts, error }
 }

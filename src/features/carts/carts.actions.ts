@@ -9,7 +9,7 @@ export async function getCart() {
 
 	const { data: { user } } = await supabase.auth.getUser();
 
-	if (!user) return { cart: [], error: null };
+	if (!user) return { cart: [], error: "session is not set" };
 
 	const { data: cart, error } = await supabase
 		.from("carts")
@@ -21,7 +21,7 @@ export async function getCart() {
 		.order("created_at", { ascending: false })
 		.overrideTypes<Array<CartItemsSelect>>();
 
-	return { cart, error };
+	return { cart, user, error };
 }
 
 export async function addToCart(productId: number, userId: string, quantity: number) {
@@ -60,8 +60,6 @@ export async function removeFromCart(productId: number, userId: string, decrease
 		.eq("user_id", userId)
 		.eq("product_id", productId)
 		.single();
-	console.log(cart, error);
-
 
 	if (decrease && cart.quantity > 1) {
 		const res = await supabase
@@ -70,9 +68,6 @@ export async function removeFromCart(productId: number, userId: string, decrease
 			.eq("product_id", productId)
 			.eq("user_id", userId)
 			.select()
-
-		console.log(res);
-
 		return;
 	}
 	const res = await supabase
@@ -81,9 +76,6 @@ export async function removeFromCart(productId: number, userId: string, decrease
 		.eq("id", cart.id)
 		.eq("user_id", userId)
 		.select()
-
-	console.log(res);
-
 }
 
 export async function removeAllFromCart(userId: string) {

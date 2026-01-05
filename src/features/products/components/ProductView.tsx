@@ -3,7 +3,7 @@
 import { colorsClasses } from "@/lib/constants";
 import { Button } from "@/shared/components/ui/button";
 import { ProductSelect } from "../product.type";
-import { IconHeart, IconMinus, IconPlus } from "@tabler/icons-react";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useState, useTransition } from "react";
 import { ImageZoom } from "@/shared/components/ui/image-zoom";
 import ProductItem from "./ProductItem";
@@ -11,6 +11,7 @@ import SectionHeader from "@/shared/components/SectionHeader";
 import { addToCart, removeFromCart } from "@/features/carts/carts.actions";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 type Props = {
 	pro: ProductSelect & { cart: { id: number; product_id: number; user_id: number; quantity: number; created_at: string }[], subImages: { id: number; image_url: string; }[] };
@@ -28,15 +29,23 @@ export default function ProductView({ pro, colors, sizes, relatedProducts, user 
 	const images = [pro.image_url, ...pro.subImages.map(i => i.image_url)];
 
 	const onAddToCart = () => {
+		if (!user?.id) {
+			toast.error("You need be logged in to using cart");
+			return;
+		};
 		startTransition(async () => {
-			await addToCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", 1);
+			await addToCart(pro.id, user.id, 1);
 			setTotalInCart(prev => prev + 1);
 		})
 	}
 
 	const onRemoveFromCart = () => {
+		if (!user?.id) {
+			toast.error("You need be logged in to using cart");
+			return;
+		};
 		startTransition(async () => {
-			await removeFromCart(pro.id, "f8697e9b-1628-4350-9d07-faec90bd69dd", true);
+			await removeFromCart(pro.id, user.id, true);
 			setTotalInCart(prev => prev - 1);
 		})
 	}
@@ -94,22 +103,30 @@ export default function ProductView({ pro, colors, sizes, relatedProducts, user 
 					</div>
 
 					<div className="flex items-center gap-3 justify-between">
-						{totalInCart > 0 ? (
-							<div className="flex items-center space-x-4">
-								{isPending && (
-									<Spinner />
-								)}
-								<div className="space-x-2">
-									<button className="text-muted-foreground" onClick={onRemoveFromCart} disabled={isPending}><IconMinus size={24} /></button>
-									<button className="text-muted-foreground" onClick={onAddToCart} disabled={isPending}><IconPlus size={24} /></button>
-								</div>
+						<div className="flex items-center space-x-4">
+							{isPending && totalInCart > 0 && (
+								<Spinner />
+							)}
+							{totalInCart > 0 && (
+								<>
+									<div className="space-x-2">
+										<button className="text-muted-foreground" onClick={onRemoveFromCart} disabled={isPending}><IconMinus size={24} /></button>
+										<button className="text-muted-foreground" onClick={onAddToCart} disabled={isPending}><IconPlus size={24} /></button>
+									</div>
 
-								<div className="mb-1.5 text-xl">{totalInCart}</div>
-							</div>
-						) : (
-							<Button size="lg" className="text-base p-6 font-bold" onClick={onAddToCart} disabled={isPending}>Add To Cart</Button>
-						)}
-						<button><IconHeart className="hover:fill-red-500 hover:text-red-500" size={30} /></button>
+									<div className="mb-1.5 text-xl">{totalInCart}</div>
+								</>
+							)}
+							<Button size="lg" className="text-base p-6 font-bold" onClick={onAddToCart} disabled={isPending || totalInCart > 0}>
+								{isPending && totalInCart < 1 ?
+									<>
+										<Spinner />
+										Adding
+									</>
+									:
+									"Add To Cart"}
+							</Button>
+						</div>
 					</div>
 
 				</div>

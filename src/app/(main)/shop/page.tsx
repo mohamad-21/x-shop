@@ -1,6 +1,8 @@
 import MainShopping from "@/features/products/components/MainShopping";
 import { getProducts } from "@/features/products/products.actions";
 import { createClient } from "@/lib/supabase/server";
+import WrapperSpinner from "@/shared/components/ui/WrapperSpinner";
+import { Suspense } from "react";
 
 export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 	const params = await searchParams;
@@ -42,11 +44,13 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 
 	return (
 		<div className="page">
-			<MainShopping
-				products={products!}
-				pagination={pagination}
-				user={user}
-			/>
+			<Suspense fallback={<WrapperSpinner />}>
+				<MainShopping
+					products={products!}
+					pagination={pagination}
+					user={user}
+				/>
+			</Suspense>
 		</div>
 	)
 }

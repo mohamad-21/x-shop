@@ -1,14 +1,16 @@
 import Banner from "@/features/home/components/Banner";
-import ProductsOverview from "@/features/products/components/ProductsOverview";
 import ShoppingFeatures from "@/features/home/components/ShoppingFeatures";
+import ProductsOverviewWrapper from "@/features/products/components/ProductsOverviewWrapper";
+
+export const dynamic = "force-static";
 
 export default function HomePage() {
 	return (
-		<div className="w-full">
-			<div className="inner-section flex flex-col gap-20">
-				<Banner />
+		<div className="w-full space-y-32">
+			<Banner />
+			<div className="inner-section flex flex-col gap-32">
 				<ShoppingFeatures />
-				<ProductsOverview />
+				<ProductsOverviewWrapper />
 
 				<div className="flex flex-wrap justify-evenly gap-10 py-20">
 					<img src="/assets/images/brand-logo-1.webp" alt="brand logo" />

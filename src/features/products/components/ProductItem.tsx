@@ -4,10 +4,10 @@ import { addToCart } from "@/features/carts/carts.actions";
 import { ProductSelect } from "@/features/products/product.type";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Spinner } from "@/shared/components/ui/spinner";
 import { User } from "@supabase/supabase-js";
-import { IconHeart } from "@tabler/icons-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 type Props = {
@@ -16,16 +16,11 @@ type Props = {
 }
 
 export default function ProductItem({ pro, user }: Props) {
-	// const [productIsLiked, setProductIsLiked] = useState(false);
 	const [isPending, startTransition] = useTransition();
-
-	// const onLikeProduct = () => {
-	// 	setProductIsLiked(!productIsLiked);
-	// }
 
 	const onAddToCart = async () => {
 		startTransition(async (): Promise<any> => {
-			if (!user) return toast.error("You should to login for using cart");
+			if (!user) return toast.error("You need be logged in to using cart");
 
 			const res = await addToCart(pro.id, user.id, 1);
 
@@ -48,18 +43,19 @@ export default function ProductItem({ pro, user }: Props) {
 			</CardHeader>
 			<CardContent className="flex flex-col gap-4 px-4">
 				{pro.category && (
-					<Link href={`/shop?cat=${pro.category?.name}`} className="text-primary">{pro.category?.display_name}</Link>
+					<Link href={`/shop?cat=${pro.category?.name}`} className="text-muted-foreground">{pro.category?.display_name}</Link>
 				)}
 				<Link href={`/pro/${pro.id}`}><CardTitle>{pro.title}</CardTitle></Link>
 			</CardContent>
 			<CardFooter className="mt-auto justify-between flex-wrap-reverse gap-4 px-4">
 				<CardAction className="space-x-3">
-					<Button variant="outline" size="lg" onClick={onAddToCart} disabled={isPending}>
-						Add To Cart
+					<Button size="lg" onClick={onAddToCart} disabled={isPending}>
+						{isPending ? (
+							<><Spinner /> Adding</>
+						) : (
+							"Add To Cart"
+						)}
 					</Button>
-					{/* <Button variant={productIsLiked ? "destructive" : "outline"} size="icon-lg" onClick={onLikeProduct} disabled={isPending}>
-						<IconHeart className={`${productIsLiked ? "text-red-500 fill-red-500" : ""}`} />
-					</Button> */}
 				</CardAction>
 				<CardDescription className="text-base">{Intl.NumberFormat("en-us", {
 					style: "currency",

@@ -21,7 +21,6 @@ export default function CartOverview({ user }: Props) {
 
 	const getCartItems = () => {
 		startTransition(async () => {
-			console.log(user);
 			if (!user) return;
 
 			const { data } = await supabase
@@ -47,6 +46,9 @@ export default function CartOverview({ user }: Props) {
 		getCartItems();
 	}, []);
 
+	if (!user) {
+		return <h2 className="text-lg py-4 px-3">You need to be logged in to using cart</h2>
+	}
 
 	return (
 		<ScrollArea className="py-4 px-3 flex flex-col max-h-[80dvh]">

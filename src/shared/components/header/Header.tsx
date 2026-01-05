@@ -7,7 +7,7 @@ import { navLinks } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { IconMenu, IconSearch, IconShoppingCart, IconUser } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -26,7 +26,7 @@ export default function Header({ user }: Props) {
 	const [openSidebar, setOpenSidebar] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
-
+	const pathname = usePathname();
 
 	const onSearchSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -49,9 +49,10 @@ export default function Header({ user }: Props) {
 
 	return (
 		<>
-			<div className="flex items-center justify-center py-3 bg-primary">
+			<div className="flex items-center justify-center py-3 bg-secondary">
 				<p className="text-sm">Free shipping worldwide for orders over $199</p>
 			</div>
+
 			<header className="py-6 flex items-center justify-center sticky top-0 left-0 right-0 bg-background/60 backdrop-blur-md z-10">
 				<nav className="flex items-center justify-between gap-5 inner-section">
 					<Link href="/">X SHOP</Link>
@@ -78,7 +79,7 @@ export default function Header({ user }: Props) {
 											</NavigationMenuItem>
 										</NavigationMenuList>
 									) : (
-										<Link href={link.href} key={link.href}>{link.title}</Link>
+										<Link href={link.href} className={`${pathname === link.href ? "text-primary" : ""}`} key={link.href}>{link.title}</Link>
 									)}
 								</li>
 							</NavigationMenu>
