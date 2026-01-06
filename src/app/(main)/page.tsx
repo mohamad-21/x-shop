@@ -2,8 +2,6 @@ import Banner from "@/features/home/components/Banner";
 import ShoppingFeatures from "@/features/home/components/ShoppingFeatures";
 import ProductsOverviewWrapper from "@/features/products/components/ProductsOverviewWrapper";
 
-export const dynamic = "force-static";
-
 export default function HomePage() {
 	return (
 		<div className="w-full space-y-32">

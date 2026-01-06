@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import SectionHeader from "@/shared/components/SectionHeader";
 import { ProductSelect } from "../product.type";
 import ProductItem from "./ProductItem";
 
