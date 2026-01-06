@@ -50,7 +50,7 @@ export default function LoginForm() {
 			}
 
 			toast.success("Successfully Logged in!");
-			router.replace("/");
+			router.replace("/account/profile");
 		});
 
 	});
